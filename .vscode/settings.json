@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:cve_project}/cves.db",
+            "name": "dddhd"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:cve_project}/instance/cve_data.db",
+            "name": "newone"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
