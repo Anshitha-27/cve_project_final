@@ -1,0 +1,4 @@
+Flask
+flask_sqlalchemy
+flask_migrate
+flask_swagger_ui
