@@ -1,0 +1,41 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "CVE API",
+    "description": "API for CVE Data",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/cves/list": {
+      "get": {
+        "summary": "Get list of CVEs",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/cves/{cve_id}": {
+      "get": {
+        "summary": "Get CVE by ID",
+        "parameters": [
+          {
+            "name": "cve_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CVE details"
+          },
+          "404": {
+            "description": "CVE not found"
+          }
+        }
+      }
+    }
+  }
+}
