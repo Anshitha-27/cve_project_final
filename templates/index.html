@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CVE List</title>
+    <script>
+        async function fetchData() {
+            let response = await fetch("/cves/list");
+            let data = await response.json();
+            document.getElementById("total").innerText = `Total Records: ${data.total}`;
+            let table = document.getElementById("cveTable");
+            table.innerHTML = "<tr><th>ID</th><th>Description</th><th>Severity</th></tr>";
+            data.cves.forEach(cve => {
+                let row = `<tr onclick="window.location='/cves/${cve.id}'">
+                    <td>${cve.id}</td><td>${cve.description}</td><td>${cve.severity}</td></tr>`;
+                table.innerHTML += row;
+            });
+        }
+        window.onload = fetchData;
+    </script>
+</head>
+<body>
+    <h1>CVE List</h1>
+    <p id="total"></p>
+    <table id="cveTable" border="1"></table>
+</body>
+</html>

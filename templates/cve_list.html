@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE List</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:hover { background-color: #ddd; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>CVE List</h1>
+    <input type="text" id="search" placeholder="Search CVE ID..." oninput="fetchCves()">
+    <table>
+    <tr>
+        <th>CVE ID</th>
+        <th>Description</th>
+        <th>Severity</th>
+        <th>Published Date</th>
+        <th>Last Modified</th>
+    </tr>
+    {% for cve in cves %}
+    <tr>
+        <td>{{ cve.cve_id }}</td>
+        <td><a href="{{ url_for('app_routes.get_cve_details', cve_id=cve.cve_id) }}">{{ cve.description }}</a></td>
+        <td>{{ cve.severity }}</td>
+        <td>{{ cve.published_date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ cve.last_modified.strftime('%Y-%m-%d') if cve.last_modified else 'N/A' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+    <script>
+        async function fetchCves() {
+            let searchValue = document.getElementById("search").value;
+            let url = "/api/cves" + (searchValue ? `?id=${searchValue}` : "");
+
+            let response = await fetch(url);
+            let data = await response.json();
+            let tbody = document.querySelector("#cveTable tbody");
+            tbody.innerHTML = "";
+
+            data.forEach(cve => {
+                let row = `<tr onclick="window.location.href='/cves/details/${cve.id}'">
+                    <td>${cve.id}</td>
+                    <td>${cve.description}</td>
+                    <td>${cve.severity}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        fetchCves();
+    </script>
+</body>
+</html>
