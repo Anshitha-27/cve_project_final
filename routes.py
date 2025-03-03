@@ -5,9 +5,12 @@ from datetime import datetime, timedelta
 
 app_routes = Blueprint("app_routes", __name__)
 
+
 @app_routes.route("/")
 def home():
-    return render_template("index.html")  
+    return render_template("index.html")  # Load the UI
+
+
 @app_routes.route("/cves/<cve_id>", methods=["GET"])
 def get_cve_details(cve_id):
     cve = CVE.query.filter_by(cve_id=cve_id).first()
@@ -19,10 +22,12 @@ def get_cve_details(cve_id):
 
 @app_routes.route("/cves/list", methods=["GET"])
 def get_cves():
-    results_per_page = int(request.args.get("resultsPerPage", 10))
-    page = int(request.args.get("page", 1))
+    results_per_page = request.args.get("resultsPerPage", type=int, default=10)
+    page = request.args.get("page", type=int, default=1)
 
-    query = CVE.query 
+    query = CVE.query  
+
+   
     cve_id = request.args.get("id")
     if cve_id:
         query = query.filter(CVE.cve_id == cve_id)
@@ -45,10 +50,16 @@ def get_cves():
         cutoff_date = datetime.utcnow() - timedelta(days=last_modified_days)
         query = query.filter(CVE.last_modified.isnot(None), CVE.last_modified >= cutoff_date)
 
-    cves = query.paginate(page=page, per_page=results_per_page)
+    if results_per_page:
+        paginated_cves = query.paginate(page=page, per_page=results_per_page)
+        cves = paginated_cves.items
+        total = paginated_cves.total
+    else:
+        cves = query.all()  # Return all results if no limit is specified
+        total = len(cves)
 
     return jsonify({
-        "total": cves.total,
+        "total": total,
         "cves": [
             {
                 "id": cve.cve_id,
@@ -57,6 +68,6 @@ def get_cves():
                 "published_date": cve.published_date.strftime("%Y-%m-%d"),
                 "last_modified": cve.last_modified.strftime("%Y-%m-%d") if cve.last_modified else None
             }
-            for cve in cves.items
+            for cve in cves
         ]
     })
