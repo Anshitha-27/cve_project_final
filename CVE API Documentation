@@ -63,7 +63,6 @@ Query Params:
 id=CVE-XXXX-YYYY → Filter by CVE ID
 year=YYYY → Filter by Year
 min_score=X&max_score=Y → Filter by CVE Score
-last_modified=N → Filter by Last Modified Days
 resultsPerPage=N → Number of results per page (default: 10)
 page=N → Page number (default: 1)
 
