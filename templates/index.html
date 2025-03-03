@@ -1,26 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>CVE List</title>
     <script>
-        async function fetchData() {
-            let response = await fetch("/cves/list");
-            let data = await response.json();
-            document.getElementById("total").innerText = `Total Records: ${data.total}`;
-            let table = document.getElementById("cveTable");
-            table.innerHTML = "<tr><th>ID</th><th>Description</th><th>Severity</th></tr>";
-            data.cves.forEach(cve => {
-                let row = `<tr onclick="window.location='/cves/${cve.id}'">
-                    <td>${cve.id}</td><td>${cve.description}</td><td>${cve.severity}</td></tr>`;
-                table.innerHTML += row;
-            });
-        }
-        window.onload = fetchData;
+      async function fetchData() {
+        let resultsPerPage = document.getElementById("rows").value;
+        let response = await fetch(
+          `/cves/list?resultsPerPage=${encodeURIComponent(resultsPerPage)}`
+        );
+        let data = await response.json();
+
+        document.getElementById(
+          "total"
+        ).innerText = `Total Records: ${data.total}`;
+
+        let table = document.getElementById("cveTable");
+        table.innerHTML =
+          "<tr><th>ID</th><th>Description</th><th>Severity</th></tr>";
+
+        data.cves.forEach((cve) => {
+          let row = `<tr onclick="window.location='/cves/${cve.id}'">
+                  <td>${cve.id}</td><td>${cve.description}</td><td>${cve.severity}</td></tr>`;
+          table.innerHTML += row;
+        });
+      }
+
+      window.onload = function () {
+        document.getElementById("rows").addEventListener("change", fetchData);
+        fetchData();
+      };
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>CVE List</h1>
+
+    <label for="rows">Select number of rows:</label>
+    <select id="rows">
+      <option value="5">5</option>
+      <option value="10" selected>10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+
     <p id="total"></p>
     <table id="cveTable" border="1"></table>
-</body>
+  </body>
 </html>
