@@ -1,0 +1,85 @@
+1️)Home Page
+Endpoint: GET /
+Description: Loads the home page with the CVE list.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CVE List</title>
+    <script>
+        async function fetchData() {
+            let response = await fetch("/cves/list");
+            let data = await response.json();
+            document.getElementById("total").innerText = `Total Records: ${data.total}`;
+            let table = document.getElementById("cveTable");
+            table.innerHTML = "<tr><th>ID</th><th>Description</th><th>Severity</th></tr>";
+            data.cves.forEach(cve => {
+                let row = `<tr onclick="window.location='/cves/${cve.id}'">
+                    <td>${cve.id}</td><td>${cve.description}</td><td>${cve.severity}</td></tr>`;
+                table.innerHTML += row;
+            });
+        }
+        window.onload = fetchData;
+    </script>
+</head>
+<body>
+    <h1>CVE List</h1>
+    <p id="total"></p>
+    <table id="cveTable" border="1"></table>
+</body>
+</html>
+
+
+2)Get CVE Details
+Endpoint: GET /cves/<cve_id>
+Description: Retrieves the details of a specific CVE.
+
+Path Params:
+cve_id → The ID of the CVE
+Example Request:
+GET /cves/CVE-2023-12345
+
+Response:
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CVE Details</title>
+</head>
+<body>
+    <h1>CVE-2023-12345</h1>
+    <p><strong>Description:</strong> A critical vulnerability in XYZ software.</p>
+    <p><strong>Severity:</strong> 7.8</p>
+    <p><strong>Published Date:</strong> 2023-04-12</p>
+    <p><strong>Last Modified:</strong> 2023-06-01</p>
+    <a href="/">Back to CVE List</a>
+</body>
+</html>
+
+3️)Get All CVEs (With Filters)
+Endpoint: GET /cves/list
+Description: Retrieves a list of CVEs with optional filters.
+
+Query Params:
+id=CVE-XXXX-YYYY → Filter by CVE ID
+year=YYYY → Filter by Year
+min_score=X&max_score=Y → Filter by CVE Score
+last_modified=N → Filter by Last Modified Days
+resultsPerPage=N → Number of results per page (default: 10)
+page=N → Page number (default: 1)
+
+Example Request:
+GET /cves/list?year=2023&min_score=5.0&max_score=9.0
+
+{
+    "total": 1,
+    "cves": [
+        {
+            "id": "CVE-2023-12345",
+            "description": "A critical vulnerability in XYZ software.",
+            "severity": "7.8",
+            "published_date": "2023-04-12",
+            "last_modified": "2023-06-01"
+        }
+    ]
+}
+
