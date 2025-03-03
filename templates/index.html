@@ -5,9 +5,20 @@
     <script>
       async function fetchData() {
         let resultsPerPage = document.getElementById("rows").value;
-        let response = await fetch(
-          `/cves/list?resultsPerPage=${encodeURIComponent(resultsPerPage)}`
-        );
+        let year = document.getElementById("year").value;
+        let minScore = document.getElementById("minScore").value;
+        let maxScore = document.getElementById("maxScore").value;
+
+        let queryParams = `resultsPerPage=${encodeURIComponent(
+          resultsPerPage
+        )}`;
+        if (year) queryParams += `&year=${encodeURIComponent(year)}`;
+        if (minScore)
+          queryParams += `&min_score=${encodeURIComponent(minScore)}`;
+        if (maxScore)
+          queryParams += `&max_score=${encodeURIComponent(maxScore)}`;
+
+        let response = await fetch(`/cves/list?${queryParams}`);
         let data = await response.json();
 
         document.getElementById(
@@ -27,6 +38,13 @@
 
       window.onload = function () {
         document.getElementById("rows").addEventListener("change", fetchData);
+        document.getElementById("year").addEventListener("change", fetchData);
+        document
+          .getElementById("minScore")
+          .addEventListener("change", fetchData);
+        document
+          .getElementById("maxScore")
+          .addEventListener("change", fetchData);
         fetchData();
       };
     </script>
@@ -42,6 +60,15 @@
       <option value="50">50</option>
       <option value="100">100</option>
     </select>
+
+    <label for="year">Year:</label>
+    <input type="number" id="year" placeholder="YYYY" />
+
+    <label for="minScore">Min Score:</label>
+    <input type="number" id="minScore" step="0.1" placeholder="0.0" />
+
+    <label for="maxScore">Max Score:</label>
+    <input type="number" id="maxScore" step="0.1" placeholder="10.0" />
 
     <p id="total"></p>
     <table id="cveTable" border="1"></table>
